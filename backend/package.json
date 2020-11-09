@@ -1,0 +1,33 @@
+{
+  "name": "playstimation-back",
+  "version": "0.1.0",
+  "description": "Backend for playstimation app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AAneas/PWeb-2020-g7.git"
+  },
+  "keywords": [
+    "games",
+    "express",
+    "node",
+    "mongo"
+  ],
+  "authors": [
+    "alan.aneas@etu.u-bordeaux.fr",
+    "alexandre.erard@etu.u-bordeaux.fr",
+    "alexis.cataldi@etu.u-bordeaux.fr",
+    "jules.loison@etu.u-bordeaux.fr"
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AAneas/PWeb-2020-g7/issues"
+  },
+  "homepage": "https://github.com/AAneas/PWeb-2020-g7#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
