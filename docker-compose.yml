@@ -1,0 +1,21 @@
+version: "3.1"
+
+services:
+  front:
+    container_name: "Front_App"
+    build: ./playstimation-front
+    restart: unless-stopped
+    ports:
+      - 8080:8080
+  back:
+    container_name: "Back_API"
+    build: ./backend
+    restart: unless-stopped
+    ports:
+      - 3000:3000
+  mongodb:
+    container_name: "Database"
+    image: mongo:latest
+    restart: always
+    ports:
+      - "27017:27017"
