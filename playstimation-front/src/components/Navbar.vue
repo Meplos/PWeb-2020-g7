@@ -1,0 +1,44 @@
+<template>
+  <v-app-bar app color="primary" dark>
+    <v-container class="py-0 fill-height">
+      <v-img
+        :src="require('../assets/gamepad.png')"
+        class="md-2 mr-2"
+        max-height="40"
+        max-width="40"
+        contain
+      ></v-img>
+      <h1 class="appName">{{ $appName }}</h1>
+
+      <v-responsive max-width="400" class="ml-16">
+        <v-text-field
+          dense
+          flat
+          hide-details
+          rounded
+          solo-inverted
+          placeholder="Type game name ..."
+          v-model="gameName"
+          append-icon="mdi-magnify"
+          @keyup.enter="search()"
+        ></v-text-field>
+      </v-responsive>
+    </v-container>
+  </v-app-bar>
+</template>
+
+<script>
+export default {
+  data: () => ({
+    gameName: "",
+  }),
+  methods: {
+    search() {
+      const gameEncoded = encodeURI(this.gameName);
+      this.$router.push({ name: "Search", params: { game: gameEncoded } });
+    },
+  },
+};
+</script>
+
+<style></style>
