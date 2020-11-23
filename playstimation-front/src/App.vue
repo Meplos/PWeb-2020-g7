@@ -1,6 +1,9 @@
 <template>
   <div id="app">
-    <v-app>
+    <v-app
+      style="
+    background: #3D3D3D;"
+    >
       <Navbar />
       <v-main>
         <v-container>

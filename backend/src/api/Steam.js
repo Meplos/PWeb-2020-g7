@@ -8,6 +8,7 @@ module.exports = class {
 
   async getAppInfo(appId) {
     const reqUrl = `${this.url}appdetails?appids=${appId}`;
+    console.log(reqUrl);
     let result = {};
     await axios.get(reqUrl).then((res) => {
       if (res.status !== 200) throw "Invalid steam id";

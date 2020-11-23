@@ -1,28 +1,29 @@
 <template>
-  <v-app-bar app color="primary" dark>
+  <v-app-bar app color="primary" dark class="navbar">
     <v-container class="py-0 fill-height">
-      <v-img
-        :src="require('../assets/gamepad.png')"
-        class="md-2 mr-2"
-        max-height="40"
-        max-width="40"
-        contain
-      ></v-img>
-      <h1 class="appName">{{ $appName }}</h1>
-
-      <v-responsive max-width="400" class="ml-16">
-        <v-text-field
-          dense
-          flat
-          hide-details
-          rounded
-          solo-inverted
-          placeholder="Type game name ..."
-          v-model="gameName"
-          append-icon="mdi-magnify"
-          @keyup.enter="search()"
-        ></v-text-field>
-      </v-responsive>
+      <v-row>
+        <v-img
+          :src="require('../assets/gamepad.png')"
+          class="md-2 mr-2"
+          max-height="40"
+          max-width="40"
+          contain
+        />
+        <h1 class="appName">{{ $appName }}</h1>
+        <v-responsive max-width="400" class="ml-16">
+          <v-text-field
+            dense
+            flat
+            hide-details
+            rounded
+            solo-inverted
+            placeholder="Type game name ..."
+            v-model="gameName"
+            append-icon="mdi-magnify"
+            @keyup.enter="search()"
+          ></v-text-field>
+        </v-responsive>
+      </v-row>
     </v-container>
   </v-app-bar>
 </template>
@@ -41,4 +42,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.navbar {
+  align-items: center;
+}
+</style>

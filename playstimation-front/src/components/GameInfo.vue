@@ -3,7 +3,7 @@
     <div class="gameInfo__header">
       <v-row>
         <v-col cols="1">
-          <v-img :src="img" max-height="330" max-width="270" contain></v-img>
+          <v-img :src="img" class="game__img"></v-img>
         </v-col>
         <v-col cols="10">
           <h1>{{ name }}</h1>
@@ -39,7 +39,10 @@
             ></v-img>
           </v-col>
           <v-col cols="2">
-            <p class="shop__price">{{ currency }}{{ shop.price }}</p>
+            <p class="shop__price" v-if="gogPrice">
+              {{ currency }}{{ shop.price }}
+            </p>
+            <p class="shop__price" v-else>Game not available on GoG</p>
           </v-col>
         </v-row>
       </div>
@@ -48,12 +51,14 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   data: () => ({
+    id: null,
     name: "The Witcher 3",
     slug: "the-witcher-3",
-    platforms: ["ps4", "pc", "switch"],
-    img: "https://placehold.it/270x330",
+    platforms: ["playstation", "pc", "nintendo"],
+    img: "https://placehold.it/170x200",
     isWish: false,
     metascore: 10,
     currency: "€",
@@ -62,7 +67,7 @@ export default {
   }),
   methods: {
     getShopOrderByPrices() {
-      if (this.steamPrice < this.gogPrice) {
+      if (!this.gogPrice || this.steamPrice < this.gogPrice) {
         return [
           { name: "steam", price: this.steamPrice, color: "success" },
           { name: "gog", price: this.gogPrice, color: "warning" },
@@ -87,10 +92,39 @@ export default {
       return "error";
     },
   },
+  mounted() {
+    axios
+      .get(`http://localhost:3000/game/${this.$route.params.game}`)
+      .then((res) => {
+        if (res.status === 200) {
+          console.log(res);
+          this.name = res.data.name;
+          this.slug = res.data.slug;
+          this.platforms = res.data.platforms;
+          this.img = res.data.img;
+          this.isWish = res.data.isWish;
+          this.metascore = res.data.metascore;
+          this.currency = res.data.currency;
+          this.steamPrice = res.data.steamPrice;
+          this.gogPrice = res.data.gogPrice;
+        } else {
+          this.$router.push({ name: "NotFound" });
+        }
+      })
+      .catch();
+  },
 };
 </script>
 
 <style>
+.game__img {
+  width: 170px;
+  height: 200px;
+
+  box-shadow: 0px 4px 10px 5px rgba(0, 0, 0, 0.25);
+  border-radius: 22px;
+}
+
 .gameInfo__headerPlatform {
   display: flex;
   margin-top: 10px;

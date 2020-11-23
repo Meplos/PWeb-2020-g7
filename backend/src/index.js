@@ -1,21 +1,24 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 const Rawg = require("./api/Rawg");
 const Steam = require("./api/Steam");
 const Gog = require("./api/Gog");
+
 const app = express();
 
 const PORT = 3000;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
+app.use(cors());
 app.get("/", (req, res) => {
   res.sendStatus(200);
 });
 
 app.get("/game/:gameName", (req, res) => {
   // TODO Refactor
+  // TODO: Error handling=> No in steam store | No in gog store
   const name = req.params.gameName;
   const rawg = new Rawg();
   const steam = new Steam();
@@ -36,8 +39,14 @@ app.get("/game/:gameName", (req, res) => {
         .then((steamRes) => {
           const { currency, price } = steam.getAppPrice(steamRes);
           gameInfo.currency = currency;
-          gameInfo.steamPrice = price;
+          gameInfo.steamPrice = price / 100;
           console.log(gameInfo);
+        })
+        .catch((err) => {
+          console.log(err);
+          res.sendStatus(404);
+        })
+        .finally(() => {
           gog
             .getOneGame(gameInfo.name)
             .then((gogResult) => {
@@ -50,10 +59,6 @@ app.get("/game/:gameName", (req, res) => {
               console.log(err);
               res.sendStatus(404);
             });
-        })
-        .catch((err) => {
-          console.log(err);
-          res.sendStatus(404);
         });
     })
     .catch((err) => {
