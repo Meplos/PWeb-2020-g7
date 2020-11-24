@@ -29,7 +29,7 @@
           v-for="shop in getShopOrderByPrices()"
           :key="shop.shop"
           class="gameInfo__shop"
-          :class="shop.color"
+          :class="shop.price ? shop.color : 'error'"
         >
           <v-col cols="10">
             <v-img
@@ -69,12 +69,13 @@ export default {
   }),
   methods: {
     getShopOrderByPrices() {
-      if (!this.gogPrice || this.steamPrice < this.gogPrice) {
+      if (this.steamPrice && this.steamPrice < this.gogPrice) {
         return [
           { name: "steam", price: this.steamPrice, color: "success" },
           { name: "gog", price: this.gogPrice, color: "warning" },
         ];
-      } else if (this.gogPrice < this.steamPrice) {
+      } else if (this.gogPrice && this.gogPrice < this.steamPrice) {
+        console.log("Wait what");
         return [
           { name: "gog", price: this.gogPrice, color: "success" },
           { name: "steam", price: this.steamPrice, color: "warning" },

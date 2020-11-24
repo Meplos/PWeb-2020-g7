@@ -10,16 +10,14 @@ module.exports = class {
     const reqUrl = `${
       this.url
     }/games/ajax/filtered?mediaType=game&search=${encodeURI(name)}`;
-    console.log(reqUrl);
     let results = [];
-    let game = {};
+    let game = null;
     await axios.get(reqUrl).then((res) => {
       if (res.status !== 200) throw "invalid name";
-      if (res.data.totalResults === 0) return null;
-      results = res.data.products;
-      game = results.filter((curr) => curr.title === name)[0];
-      if (!game) return null;
-      console.log(game);
+      if (res.data.totalResults > 0) {
+        results = res.data.products;
+        game = results.filter((curr) => curr.title === name)[0];
+      }
     });
     return game;
   }

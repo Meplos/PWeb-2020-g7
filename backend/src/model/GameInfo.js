@@ -5,7 +5,7 @@ module.exports = class {
     this.metascore = metascore;
     this.img = img;
     this.platforms = [];
-    this.currency = "";
+    this.currency = "€";
     this.steamPrice = null;
     this.gogPrice = null;
   }

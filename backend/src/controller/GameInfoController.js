@@ -6,16 +6,11 @@ const GameInfo = require("../model/GameInfo");
 module.exports = class {
   constructor() {}
 
-  async buildGameInfo(name) {
-    let statusCode = 404;
+  async buildRawgInfo(name) {
+    const rawg = new Rawg();
     let gameInfo = null;
     let steamInfo = null;
-
-    const rawg = new Rawg();
-    const steam = new Steam();
-    const gog = new Gog();
     const rawResult = rawg.getGame(name);
-
     await rawResult
       .then((game) => {
         gameInfo = new GameInfo(
@@ -30,11 +25,12 @@ module.exports = class {
       .catch((err) => {
         console.log(err);
       });
+    return { gameInfo, steamInfo };
+  }
 
-    if (!steamInfo) {
-      statusCode = 400;
-      return { statusCode, gameInfo };
-    }
+  async buildSteamInfo(steamInfo, gameInfo) {
+    const steam = new Steam();
+    if (!steamInfo) return gameInfo;
     await steam
       .getAppInfo(steamInfo.steamGameId)
       .then((steamRes) => {
@@ -45,18 +41,42 @@ module.exports = class {
       .catch((err) => {
         console.log(err);
       });
+    console.log(gameInfo);
+    return gameInfo;
+  }
 
+  async buildGogInfo(gameInfo) {
+    const gog = new Gog();
     await gog
       .getOneGame(gameInfo.name)
       .then((gogResult) => {
         const price = gogResult ? gog.getPrice(gogResult) : null;
-        gameInfo.setGogPrice(price);
-        statusCode = 200;
+        if (price) gameInfo.setGogPrice(price);
       })
       .catch((err) => {
         console.log(err);
       });
+    return gameInfo;
+  }
+  async buildGameInfo(name) {
+    let statusCode = 404;
+    let gameInfo = null;
+    let steamInfo = null;
+    await this.buildRawgInfo(name).then((rawg) => {
+      steamInfo = rawg.steamInfo;
+      gameInfo = rawg.gameInfo;
+    });
+    if (gameInfo) statusCode = 200;
+    else {
+      return { statusCode, gameInfo };
+    }
+    await this.buildSteamInfo(steamInfo, gameInfo).then(
+      (steamGameInfo) => (gameInfo = steamGameInfo)
+    );
 
+    await this.buildGogInfo(gameInfo).then(
+      (gogGameInfo) => (gameInfo = gogGameInfo)
+    );
     return { statusCode, gameInfo };
   }
 };
