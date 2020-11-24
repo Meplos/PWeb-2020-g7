@@ -57,15 +57,15 @@ import axios from "axios";
 export default {
   data: () => ({
     id: null,
-    name: "The Witcher 3",
-    slug: "the-witcher-3",
-    platforms: ["playstation", "pc", "nintendo"],
+    name: "",
+    slug: "",
+    platforms: [],
     img: "https://placehold.it/170x200",
     isWish: false,
-    metascore: 10,
-    currency: "€",
-    steamPrice: 29.99,
-    gogPrice: 39.99,
+    metascore: null,
+    currency: "",
+    steamPrice: null,
+    gogPrice: null,
   }),
   methods: {
     getShopOrderByPrices() {
@@ -86,6 +86,26 @@ export default {
         ];
       }
     },
+
+    getGame() {
+      axios
+        .get(`http://localhost:3000/game/${this.$route.params.game}`)
+        .then((res) => {
+          console.log(res);
+          this.name = res.data.name;
+          this.slug = res.data.slug;
+          this.platforms = res.data.platforms;
+          this.img = res.data.img;
+          this.isWish = res.data.isWish;
+          this.metascore = res.data.metascore;
+          this.currency = res.data.currency;
+          this.steamPrice = res.data.steamPrice;
+          this.gogPrice = res.data.gogPrice;
+        })
+        .catch(() => {
+          this.$router.push({ name: "NotFound" });
+        });
+    },
   },
   computed: {
     getScoreColor: function() {
@@ -94,24 +114,15 @@ export default {
       return "error";
     },
   },
+  watch: {
+    "$route.params.game"(newId, oldId) {
+      if (newId !== oldId) {
+        this.getGame(newId);
+      }
+    },
+  },
   mounted() {
-    axios
-      .get(`http://localhost:3000/game/${this.$route.params.game}`)
-      .then((res) => {
-        console.log(res);
-        this.name = res.data.name;
-        this.slug = res.data.slug;
-        this.platforms = res.data.platforms;
-        this.img = res.data.img;
-        this.isWish = res.data.isWish;
-        this.metascore = res.data.metascore;
-        this.currency = res.data.currency;
-        this.steamPrice = res.data.steamPrice;
-        this.gogPrice = res.data.gogPrice;
-      })
-      .catch(() => {
-        this.$router.push({ name: "NotFound" });
-      });
+    this.getGame();
   },
 };
 </script>
