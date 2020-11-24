@@ -20,7 +20,7 @@ module.exports = class {
   getAppPrice(app) {
     const currency = currencyFormatter.findCurrency(app.price_overview.currency)
       .symbol;
-    const price = app.price_overview.final;
+    const price = app.price_overview.final / 100;
     return { currency, price };
   }
 };

@@ -39,10 +39,12 @@
             ></v-img>
           </v-col>
           <v-col cols="2">
-            <p class="shop__price" v-if="gogPrice">
+            <p class="shop__price" v-if="shop.price">
               {{ currency }}{{ shop.price }}
             </p>
-            <p class="shop__price" v-else>Game not available on GoG</p>
+            <p class="shop__price" v-else>
+              Game not available on {{ shop.name }}
+            </p>
           </v-col>
         </v-row>
       </div>
@@ -96,22 +98,20 @@ export default {
     axios
       .get(`http://localhost:3000/game/${this.$route.params.game}`)
       .then((res) => {
-        if (res.status === 200) {
-          console.log(res);
-          this.name = res.data.name;
-          this.slug = res.data.slug;
-          this.platforms = res.data.platforms;
-          this.img = res.data.img;
-          this.isWish = res.data.isWish;
-          this.metascore = res.data.metascore;
-          this.currency = res.data.currency;
-          this.steamPrice = res.data.steamPrice;
-          this.gogPrice = res.data.gogPrice;
-        } else {
-          this.$router.push({ name: "NotFound" });
-        }
+        console.log(res);
+        this.name = res.data.name;
+        this.slug = res.data.slug;
+        this.platforms = res.data.platforms;
+        this.img = res.data.img;
+        this.isWish = res.data.isWish;
+        this.metascore = res.data.metascore;
+        this.currency = res.data.currency;
+        this.steamPrice = res.data.steamPrice;
+        this.gogPrice = res.data.gogPrice;
       })
-      .catch();
+      .catch(() => {
+        this.$router.push({ name: "NotFound" });
+      });
   },
 };
 </script>

@@ -1,10 +1,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const Rawg = require("./api/Rawg");
-const Steam = require("./api/Steam");
-const Gog = require("./api/Gog");
 
+const GameInfoController = require("./controller/GameInfoController");
 const app = express();
 
 const PORT = 3000;
@@ -17,54 +15,15 @@ app.get("/", (req, res) => {
 });
 
 app.get("/game/:gameName", (req, res) => {
-  // TODO Refactor
-  // TODO: Error handling=> No in steam store | No in gog store
   const name = req.params.gameName;
-  const rawg = new Rawg();
-  const steam = new Steam();
-  const gog = new Gog();
-  const rawResult = rawg.getGame(name);
-  const gameInfo = {};
-  rawResult
-    .then((game) => {
-      gameInfo.id = game.id;
-      gameInfo.name = game.name;
-      gameInfo.metascore = game.metacritic;
-      gameInfo.img = game.background_image;
-      gameInfo.platforms = rawg.getGamePlatforms(game);
-      const steamInfo = rawg.getSteamInfo(game);
-      if (!steamInfo) res.sendStatus(400);
-      steam
-        .getAppInfo(steamInfo.steamGameId)
-        .then((steamRes) => {
-          const { currency, price } = steam.getAppPrice(steamRes);
-          gameInfo.currency = currency;
-          gameInfo.steamPrice = price / 100;
-          console.log(gameInfo);
-        })
-        .catch((err) => {
-          console.log(err);
-          res.sendStatus(404);
-        })
-        .finally(() => {
-          gog
-            .getOneGame(gameInfo.name)
-            .then((gogResult) => {
-              const gogPrice = gogResult ? gog.getPrice(gogResult) : null;
-              gameInfo.gogPrice = gogPrice;
-              console.log(gameInfo);
-              res.status(200).send(gameInfo);
-            })
-            .catch((err) => {
-              console.log(err);
-              res.sendStatus(404);
-            });
-        });
-    })
-    .catch((err) => {
-      console.log(err);
-      res.sendStatus(404);
-    });
+  const gameInfoController = new GameInfoController();
+  gameInfoController.buildGameInfo(name).then((result) => {
+    if (result.statusCode === 200) {
+      res.status(result.statusCode).send(result.gameInfo);
+    } else {
+      res.sendStatus(result.statusCode);
+    }
+  });
 });
 
 app.listen(PORT, () => {

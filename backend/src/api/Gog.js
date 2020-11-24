@@ -9,15 +9,19 @@ module.exports = class {
   async getOneGame(name) {
     const reqUrl = `${
       this.url
-    }/games/ajax/filtered?mediaType=game&search=${encodeURI(name)}&limit=1`;
+    }/games/ajax/filtered?mediaType=game&search=${encodeURI(name)}`;
     console.log(reqUrl);
-    let result = {};
+    let results = [];
+    let game = {};
     await axios.get(reqUrl).then((res) => {
       if (res.status !== 200) throw "invalid name";
       if (res.data.totalResults === 0) return null;
-      result = res.data.products[0];
+      results = res.data.products;
+      game = results.filter((curr) => curr.title === name)[0];
+      if (!game) return null;
+      console.log(game);
     });
-    return result;
+    return game;
   }
 
   getPrice(game) {
