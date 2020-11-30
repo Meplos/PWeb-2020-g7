@@ -31,6 +31,7 @@ module.exports = class {
   async buildSteamInfo(steamInfo, gameInfo) {
     const steam = new Steam();
     if (!steamInfo) return gameInfo;
+    gameInfo.steamURL = steamInfo.steamGameURL;
     await steam
       .getAppInfo(steamInfo.steamGameId)
       .then((steamRes) => {
@@ -50,8 +51,11 @@ module.exports = class {
     await gog
       .getOneGame(gameInfo.name)
       .then((gogResult) => {
-        const price = gogResult ? gog.getPrice(gogResult) : null;
-        if (price) gameInfo.setGogPrice(price);
+        if (gogResult) {
+          const price = gog.getPrice(gogResult);
+          gameInfo.setGogPrice(price);
+          gameInfo.gogURL = `https://gog.com/${gogResult.url}`;
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -77,6 +81,7 @@ module.exports = class {
     await this.buildGogInfo(gameInfo).then(
       (gogGameInfo) => (gameInfo = gogGameInfo)
     );
+    console.log(gameInfo);
     return { statusCode, gameInfo };
   }
 };

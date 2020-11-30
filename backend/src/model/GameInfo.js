@@ -7,7 +7,9 @@ module.exports = class {
     this.platforms = [];
     this.currency = "€";
     this.steamPrice = null;
+    this.steamURL = null;
     this.gogPrice = null;
+    this.gogURL = null;
   }
 
   setPlatforms(platforms) {
