@@ -8,8 +8,11 @@
           max-height="40"
           max-width="40"
           contain
+          @click="$router.push({ name: 'Home' })"
         />
-        <h1 class="appName">{{ $appName }}</h1>
+        <h1 class="appName" @click="$router.push({ name: 'Home' })">
+          {{ $appName }}
+        </h1>
         <v-responsive max-width="400" class="ml-16">
           <v-text-field
             dense

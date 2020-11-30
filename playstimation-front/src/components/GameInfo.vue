@@ -25,28 +25,32 @@
         </v-col>
       </v-row>
       <div class="gameInfo__shopList">
-        <v-row
+        <a
           v-for="shop in getShopOrderByPrices()"
           :key="shop.shop"
-          class="gameInfo__shop"
-          :class="shop.price ? shop.color : 'error'"
+          :href="shop.url"
         >
-          <v-col cols="10">
-            <v-img
-              :src="require(`../assets/${shop.name}.png`)"
-              max-height="70"
-              max-width="70"
-            ></v-img>
-          </v-col>
-          <v-col cols="2">
-            <p class="shop__price" v-if="shop.price">
-              {{ currency }}{{ shop.price }}
-            </p>
-            <p class="shop__price" v-else>
-              Game not available on {{ shop.name }}
-            </p>
-          </v-col>
-        </v-row>
+          <v-row
+            class="gameInfo__shop"
+            :class="shop.price ? shop.color : 'error'"
+          >
+            <v-col cols="10">
+              <v-img
+                :src="require(`../assets/${shop.name}.png`)"
+                max-height="70"
+                max-width="70"
+              ></v-img>
+            </v-col>
+            <v-col cols="2">
+              <p class="shop__price" v-if="shop.price">
+                {{ currency }}{{ shop.price }}
+              </p>
+              <p class="shop__price" v-else>
+                Game not available on {{ shop.name }}
+              </p>
+            </v-col>
+          </v-row>
+        </a>
       </div>
     </div>
   </div>
@@ -65,25 +69,57 @@ export default {
     metascore: null,
     currency: "",
     steamPrice: null,
+    steamURL: null,
     gogPrice: null,
+    gogURL: null,
   }),
   methods: {
     getShopOrderByPrices() {
       if (this.steamPrice && this.steamPrice < this.gogPrice) {
         return [
-          { name: "steam", price: this.steamPrice, color: "success" },
-          { name: "gog", price: this.gogPrice, color: "warning" },
+          {
+            name: "steam",
+            price: this.steamPrice,
+            color: "success",
+            url: this.steamURL,
+          },
+          {
+            name: "gog",
+            price: this.gogPrice,
+            color: "warning",
+            url: this.steamURL,
+          },
         ];
       } else if (this.gogPrice && this.gogPrice < this.steamPrice) {
         console.log("Wait what");
         return [
-          { name: "gog", price: this.gogPrice, color: "success" },
-          { name: "steam", price: this.steamPrice, color: "warning" },
+          {
+            name: "gog",
+            price: this.gogPrice,
+            color: "success",
+            url: this.gogURL,
+          },
+          {
+            name: "steam",
+            price: this.steamPrice,
+            color: "warning",
+            url: this.steamURL,
+          },
         ];
       } else {
         return [
-          { name: "steam", price: this.steamPrice, color: "success" },
-          { name: "gog", price: this.gogPrice, color: "success" },
+          {
+            name: "steam",
+            price: this.steamPrice,
+            color: "success",
+            url: this.steamURL,
+          },
+          {
+            name: "gog",
+            price: this.gogPrice,
+            color: "success",
+            url: this.gogURL,
+          },
         ];
       }
     },
@@ -101,7 +137,9 @@ export default {
           this.metascore = res.data.metascore;
           this.currency = res.data.currency;
           this.steamPrice = res.data.steamPrice;
+          this.steamURL = res.data.steamURL;
           this.gogPrice = res.data.gogPrice;
+          this.gogURL = res.data.gogURL;
         })
         .catch(() => {
           this.$router.push({ name: "NotFound" });
@@ -129,6 +167,10 @@ export default {
 </script>
 
 <style>
+a {
+  color: white !important;
+  text-decoration: none !important;
+}
 .game__img {
   width: 170px;
   height: 200px;
