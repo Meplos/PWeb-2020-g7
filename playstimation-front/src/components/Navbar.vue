@@ -26,6 +26,29 @@
             @keyup.enter="search()"
           ></v-text-field>
         </v-responsive>
+        <v-btn
+          class="success ml-4"
+          justify="end"
+          v-if="!$store.state.token"
+          @click="$router.push({ name: 'LogIn' })"
+        >
+          Log In
+        </v-btn>
+        <v-btn v-else text>
+          <v-icon>mdi-shopping-outline</v-icon>
+        </v-btn>
+        <v-btn
+          class="ml-4"
+          text
+          justify="end"
+          v-if="!$store.state.token"
+          @click="$router.push({ name: 'SignUp' })"
+        >
+          Create account
+        </v-btn>
+        <v-btn v-else text @click="$store.commit('DECONNEXION')">
+          <v-icon>mdi-power</v-icon>
+        </v-btn>
       </v-row>
     </v-container>
   </v-app-bar>

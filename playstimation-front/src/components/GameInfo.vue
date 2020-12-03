@@ -125,8 +125,15 @@ export default {
     },
 
     getGame() {
+      console.log(this.$store.token);
+      let headers = { token: null };
+      if (this.$store.state.token) {
+        headers = { token: this.$store.token };
+      }
       axios
-        .get(`http://localhost:3000/game/${this.$route.params.game}`)
+        .get(`${this.backendHost}/game/${this.$route.params.game}`, {
+          headers: headers,
+        })
         .then((res) => {
           console.log(res);
           this.name = res.data.name;
