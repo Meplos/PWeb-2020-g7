@@ -131,7 +131,7 @@ export default {
         headers = { token: this.$store.token };
       }
       axios
-        .get(`${this.backendHost}/game/${this.$route.params.game}`, {
+        .get(`${this.$backendHost}/game/${this.$route.params.game}`, {
           headers: headers,
         })
         .then((res) => {
