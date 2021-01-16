@@ -1,5 +1,7 @@
 # playstimation-front
 
+In the playstimation-front file, enter :
+
 ## Project setup
 ```
 npm install
