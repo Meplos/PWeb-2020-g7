@@ -126,10 +126,14 @@ export default {
 
     getGame() {
       console.log(this.$store.token);
-      let headers = { token: null };
+      let headers = {
+        token: null,
+        lang: navigator.language,
+      };
       if (this.$store.state.token) {
-        headers = { token: this.$store.token };
+        headers.token = this.$store.token;
       }
+      console.log(headers);
       axios
         .get(`${this.$backendHost}/game/${this.$route.params.game}`, {
           headers: headers,

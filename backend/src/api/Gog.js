@@ -6,10 +6,13 @@ module.exports = class {
     this.url = "https://embed.gog.com";
   }
 
-  async getOneGame(name) {
+  async getOneGame(name, userLang) {
     const reqUrl = `${
       this.url
-    }/games/ajax/filtered?mediaType=game&search=${encodeURI(name)}`;
+    }/games/ajax/filtered?mediaType=game&language=${userLang}&search=${encodeURI(
+      name
+    )}`;
+    console.log(`GOG url : ${reqUrl}`);
     let results = [];
     let game = null;
     await axios.get(reqUrl).then((res) => {

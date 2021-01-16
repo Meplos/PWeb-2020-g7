@@ -6,8 +6,8 @@ module.exports = class {
     this.url = "https://store.steampowered.com/api/";
   }
 
-  async getAppInfo(appId) {
-    const reqUrl = `${this.url}appdetails?appids=${appId}`;
+  async getAppInfo(appId, userLanguage) {
+    const reqUrl = `${this.url}appdetails?l=${userLanguage}&appids=${appId}`;
     console.log(reqUrl);
     let result = {};
     await axios.get(reqUrl).then((res) => {
@@ -18,6 +18,7 @@ module.exports = class {
   }
 
   getAppPrice(app) {
+    console.log(app.price_overview.currency);
     const currency = currencyFormatter.findCurrency(app.price_overview.currency)
       .symbol;
     const price = app.price_overview.final / 100;
