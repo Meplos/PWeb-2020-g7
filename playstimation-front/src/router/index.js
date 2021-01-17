@@ -4,6 +4,7 @@ import HelloWorld from "../components/HelloWorld";
 import GameInfo from "../components/GameInfo";
 import NotFound from "../components/NotFound";
 import AuthForm from "../components/AuthForm";
+import WishList from "../components/WishList";
 import store from "../store";
 Vue.use(VueRouter);
 
@@ -34,6 +35,12 @@ const routes = [
     path: "/",
     name: "Home",
     component: HelloWorld,
+  },
+  {
+    path: "/WishList",
+    name: "WishList",
+    component: WishList,
+    props: { isSignInPage: true },
   },
 ];
 
