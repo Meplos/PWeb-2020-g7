@@ -25,7 +25,7 @@ module.exports = class {
     user.password = bcrypt.hashSync(user.password, this.SALT_ITERATION);
     let isSaved = false;
     await this.repo.save(user).then((res) => {
-      console.log(res ? "Account created" : "Error when create account");
+      console.log(res ? "Account created" : "Error when creating account");
       isSaved = res;
     });
     return isSaved;

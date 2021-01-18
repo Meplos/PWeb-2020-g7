@@ -12,6 +12,7 @@ const PORT = 3000;
 const DB_URL = "mongodb:27017";
 const DB_NAME = "playstimation";
 const authController = new AuthController(new UserMongoRepository());
+const wishlistController = new WishlistController(new WishlistMongoRepository());
 
 mongoose.connect(`mongodb://${DB_URL}/${DB_NAME}`, {
   useNewUrlParser: true,
@@ -54,9 +55,9 @@ db.once("open", () => {
   });
 
   app.post("/wishlist/:gameName", (req, res) => {
-    const name = req.params.gameName;
-    const wishlistController = new WishlistController();
-    wishlistController.addGameToWishlist(name).then((result) => {
+    const gameName = req.params.gameName;
+    const userName = authController.getUserIdByToken($store.state.token);
+    wishlistController.addGameToWishlist(gameName, userName).then((result) => {
       if (result.statusCode === 200) {
         res.status(result.statusCode).send(result.gameInfo);
       } else {

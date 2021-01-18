@@ -161,14 +161,10 @@ export default {
     },
     addToWishList()
   {
-      console.log("press wishlsit");
-      
-      axios.get(`${this.$backendHost}/game/${this.$route.params.game}`, {
-         
-        })
-        .then((res) => {
-          console.log(res);
-        })
+      console.log("press wishlist");
+      axios.post(`${this.$backendHost}/wishlist/${this.$route.params.game}`, user).then((res) => {
+        console.log(res);
+      });
   },
   },
   
