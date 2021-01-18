@@ -162,7 +162,7 @@ export default {
     addToWishList()
   {
       console.log("press wishlist");
-      axios.post(`${this.$backendHost}/wishlist/${this.$route.params.game}`, user).then((res) => {
+      axios.post(`${this.$backendHost}/wishlist/${this.$route.params.game}`).then((res) => {
         console.log(res);
       });
   },

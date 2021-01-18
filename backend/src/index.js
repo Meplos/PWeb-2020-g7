@@ -8,6 +8,7 @@ const WishlistController = require("./controller/WishlistController");
 const app = express();
 const AuthController = require("./controller/AuthController");
 const UserMongoRepository = require("./infra/UserMongoRepository");
+const WishlistMongoRepository = require("./infra/WishlistMongoRepository");
 const PORT = 3000;
 const DB_URL = "mongodb:27017";
 const DB_NAME = "playstimation";

@@ -116,6 +116,7 @@ export default {
       return bcrypt.hashSync(password, salt);
     },
     signup(user) {
+      console.log("Signing up");
       axios.post(`${this.$backendHost}/signup`, user).then((res) => {
         console.log(res);
       });
