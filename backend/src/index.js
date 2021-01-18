@@ -4,6 +4,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 
 const GameInfoController = require("./controller/GameInfoController");
+const WishlistController = require("./controller/WishlistController");
 const app = express();
 const AuthController = require("./controller/AuthController");
 const UserMongoRepository = require("./infra/UserMongoRepository");
@@ -49,6 +50,18 @@ db.once("open", () => {
         res
           .status(401)
           .send({ title: "Sign in error", error: "Invalid credential" });
+    });
+  });
+
+  app.post("/wishlist/:gameName", (req, res) => {
+    const name = req.params.gameName;
+    const wishlistController = new WishlistController();
+    wishlistController.addGameToWishlist(name).then((result) => {
+      if (result.statusCode === 200) {
+        res.status(result.statusCode).send(result.gameInfo);
+      } else {
+        res.sendStatus(result.statusCode);
+      }
     });
   });
 

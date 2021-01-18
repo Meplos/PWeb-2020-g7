@@ -19,6 +19,9 @@
           </div>
         </v-col>
         <v-col cols="1">
+          <v-btn class="add" @click="addToWishList">
+            <v-icon>mdi-shopping-outline</v-icon>
+          </v-btn>
           <div class="gameInfo__headerMetascore" :class="getScoreColor">
             {{ metascore }}
           </div>
@@ -156,7 +159,20 @@ export default {
           this.$router.push({ name: "NotFound" });
         });
     },
+    addToWishList()
+  {
+      console.log("press wishlsit");
+      
+      axios.get(`${this.$backendHost}/game/${this.$route.params.game}`, {
+         
+        })
+        .then((res) => {
+          console.log(res);
+        })
   },
+  },
+  
+  
   computed: {
     getScoreColor: function() {
       if (this.metascore > 80) return "success";
@@ -173,7 +189,7 @@ export default {
   },
   mounted() {
     this.getGame();
-  },
+  }
 };
 </script>
 
