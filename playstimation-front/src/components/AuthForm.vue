@@ -126,7 +126,10 @@ export default {
         console.log(res);
         if (res.status === 200) {
           console.log(res.data.token);
+          console.log(res.data.refreshToken);
           this.$store.commit("CONNEXION", res.data.token);
+          this.$store.commit("SET_REFRESH", res.data.refreshToken);
+          this.$store.dispatch("refreshToken");
           this.$router.push({ name: "Home" });
         } else {
           this.error = res.data.error;
