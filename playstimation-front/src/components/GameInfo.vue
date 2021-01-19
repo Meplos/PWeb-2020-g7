@@ -137,6 +137,7 @@ export default {
         headers.token = this.$store.token;
       }
       console.log(headers);
+      console.log("get game beginning");
       axios
         .get(`${this.$backendHost}/game/${this.$route.params.game}`, {
           headers: headers,
@@ -158,13 +159,32 @@ export default {
         .catch(() => {
           this.$router.push({ name: "NotFound" });
         });
+        console.log("get game end");
     },
     addToWishList()
   {
-      console.log("press wishlist");
-      axios.post(`${this.$backendHost}/wishlist/${this.$route.params.game}`).then((res) => {
+      let headers = {
+        token: null
+      };
+      console.log("this.$store.state.token :");
+      console.log(this.$store.state.token);
+      console.log("this.$store.token :");
+      console.log(this.$store.token);
+      //console.log($store.state.token);
+      //console.log($store.token);
+      if (this.$store.state.token) {
+        headers = { token: this.$store.token };
+      }
+      console.log("press wishlist beginning");
+      axios.post(`${this.$backendHost}/wishlist/${this.$route.params.game}`, {
+          headers: headers,
+        })
+        .then((res) => {
         console.log(res);
-      });
+      }).catch(() => {
+          console.log("wishlist error caught");
+        });
+      console.log("press wishlist end");
   },
   },
   

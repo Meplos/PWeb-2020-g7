@@ -63,8 +63,12 @@ db.once("open", () => {
   });
 
   app.post("/wishlist/:gameName", (req, res) => {
+    console.log("in post function");
     const gameName = req.params.gameName;
+    console.log("in post function 1");
+    console.log(req.headers.token);
     if (req.headers.token) {
+      console.log("in post function 2");
       const userName = authController.getUserIdByToken(req.headers.token);
       wishlistController
         .addGameToWishlist(gameName, userName)
@@ -79,6 +83,7 @@ db.once("open", () => {
   });
 
   app.get("/game/:gameName", (req, res) => {
+    console.log("in get function");
     const name = req.params.gameName;
     const gameInfoController = new GameInfoController();
     gameInfoController.buildGameInfo(name).then((result) => {
