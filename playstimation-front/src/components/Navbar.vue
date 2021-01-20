@@ -46,7 +46,7 @@
         >
           Create account
         </v-btn>
-        <v-btn v-else text @click="$store.commit('DECONNEXION')">
+        <v-btn v-else text @click="$store.commit('DECONNEXION'), $router.push({ name: 'Home' })">
           <v-icon>mdi-power</v-icon>
         </v-btn>
       </v-row>
