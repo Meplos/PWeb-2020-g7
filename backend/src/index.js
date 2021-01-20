@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const mongoose = require("mongoose");
+mongoose.set('useFindAndModify', false);
 
 const GameInfoController = require("./controller/GameInfoController");
 const WishlistController = require("./controller/WishlistController");
@@ -10,6 +11,7 @@ const AuthController = require("./controller/AuthController");
 const UserMongoRepository = require("./infra/UserMongoRepository");
 const WishlistMongoRepository = require("./infra/WishlistMongoRepository");
 const PORT = 3000;
+const token = "";
 const DB_URL = "mongodb:27017";
 const DB_NAME = "playstimation";
 const authController = new AuthController(new UserMongoRepository());
@@ -65,18 +67,25 @@ db.once("open", () => {
   app.post("/wishlist/:gameName", (req, res) => {
     console.log("in post function");
     const gameName = req.params.gameName;
-    console.log("in post function 1");
-    console.log(req.headers.token);
-    if (req.headers.token) {
+    console.log( req.body.headers);
+    if (req.body.headers) {
       console.log("in post function 2");
-      const userName = authController.getUserIdByToken(req.headers.token);
+      const userName = authController.getUserIdByToken(req.body.headers);
       wishlistController
         .addGameToWishlist(gameName, userName)
         .then((result) => {
-          if (result.statusCode === 200) {
-            res.status(result.statusCode).send(result.gameInfo);
+          console.log(result);
+          console.log(result.statusCode);
+          if (result) {
+            res.status(200).send({
+              title : "Game added to wishlist",
+              gameName : gameName,
+              userName : userName,
+            });
           } else {
-            res.sendStatus(result.statusCode);
+            res.Status(401).send({
+              title : "error adding game to wishlist"
+            });
           }
         });
     }
@@ -97,6 +106,7 @@ db.once("open", () => {
 
   app.get("/authTest", (req, res) => {
     console.log(req.headers);
+    token = req.headers.token;
     if (req.headers.token)
       console.log(authController.getUserIdByToken(req.headers.token));
   });

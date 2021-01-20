@@ -166,6 +166,7 @@ export default {
       let headers = {
         token: null
       };
+      headers.token =  this.$store.state.token ;
       console.log("this.$store.state.token :");
       console.log(this.$store.state.token);
       console.log("this.$store.token :");
@@ -173,14 +174,16 @@ export default {
       //console.log($store.state.token);
       //console.log($store.token);
       if (this.$store.state.token) {
-        headers = { token: this.$store.token };
+        headers.token =  this.$store.state.token ;
       }
       console.log("press wishlist beginning");
+      console.log(headers.token);
       axios.post(`${this.$backendHost}/wishlist/${this.$route.params.game}`, {
-          headers: headers,
+          headers: this.$store.state.token,
         })
         .then((res) => {
-        console.log(res);
+          console.log(res.data)  
+          this.name = res.data.name;
       }).catch(() => {
           console.log("wishlist error caught");
         });

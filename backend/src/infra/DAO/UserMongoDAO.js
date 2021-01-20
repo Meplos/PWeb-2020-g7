@@ -10,6 +10,10 @@ const UserSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  wishlist:{
+    type : String,
+    required : false,
+  },
 });
 
 const UserDAO = mongoose.model("User", UserSchema);

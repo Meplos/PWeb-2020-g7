@@ -8,7 +8,7 @@ const WishlistSchema = mongoose.Schema({
   },
   wishlist: {
     type: Array,
-    required: false,
+    required: true,
   },
 });
 
