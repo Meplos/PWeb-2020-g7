@@ -19,9 +19,6 @@
           </div>
         </v-col>
         <v-col cols="1">
-          <v-btn class="add" @click="addToWishList">
-            <v-icon>mdi-shopping-outline</v-icon>
-          </v-btn>
           <div class="gameInfo__headerMetascore" :class="getScoreColor">
             {{ metascore }}
           </div>

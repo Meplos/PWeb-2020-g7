@@ -48,13 +48,4 @@ module.exports = class {
     return jwt.verify(token, this.SECRET).userId;
   }
 
-  async getUserMailById(id){
-    let mail ;
-     await this.repo.findOneById(id).then((res) => {
-      console.log(res);
-      mail = res ;
-  });
-  return mail ;
-    
-  }
 };

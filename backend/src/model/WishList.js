@@ -9,7 +9,7 @@ module.exports = class {
         return this.gameInfo ;
     }
 
-    addGame(_gameInfo)
+    addGameModel(_gameInfo)
    {
        this.gameInfo.push(_gameInfo);
    } 

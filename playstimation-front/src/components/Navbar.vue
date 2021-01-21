@@ -34,7 +34,7 @@
         >
           Log In
         </v-btn>
-        <v-btn v-else text @click="$router.push({ name: 'WishList' })">
+        <v-btn v-else text>
           <v-icon>mdi-shopping-outline</v-icon>
         </v-btn>
         <v-btn
