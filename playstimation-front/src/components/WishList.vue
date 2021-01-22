@@ -1,22 +1,15 @@
 <template>
   <div class="WishList">
     <v-row>
-      <v-col cols="9" class="msg">
-        <v-alert class="success" outlined>
-          This is your WishList
-        </v-alert>
-        <div class="gameInfo__shopList">
-        <a
-          v-for="game in getWishList()"
-          :key="game.game"
-          :href="game.url"
-        >
-          <p class="test_game">
-              This game is on your wishlist {{ game.name }}
-          </p>
-        </a>
+      <h1>Wishlist</h1>
+      <div v-if="wishlist.length <= 0">
+        <v-alert class="error">Wishlist is empty</v-alert>
       </div>
-      </v-col>
+    </v-row>
+    <v-row v-for="(game, index) in wishlist" :key="index">
+      <div>
+        {{ game.name }}
+      </div>
     </v-row>
   </div>
 </template>
@@ -25,11 +18,7 @@
 import axios from "axios";
 export default {
   data: () => ({
-    id: null,
-    name: "",
-    slug: "",
-    platforms: [],
-    img: "https://placehold.it/170x200",
+    wishlist: [],
   }),
   methods: {
     getWishList() {
@@ -39,31 +28,23 @@ export default {
         lang: navigator.language,
       };
       if (this.$store.state.token) {
-        headers.token = this.$store.token;
+        headers.token = this.$store.state.token;
       }
       console.log(headers);
       axios
         .get(`${this.$backendHost}/wishlist/`, {
           headers: headers,
         })
-        return [
-          {
-            name: "gog",
-            price: this.gogPrice,
-            color: "success",
-            url: this.gogURL,
-          },
-          {
-            name: "steam",
-            price: this.steamPrice,
-            color: "warning",
-            url: this.steamURL,
-          },
-        ];
-    }
-      
-  }
-  };
+        .then((res) => {
+          this.wishlist = res.data.wishlist;
+        });
+    },
+  },
+
+  mounted() {
+    this.getWishList();
+  },
+};
 </script>
 
 <style>

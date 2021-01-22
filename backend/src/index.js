@@ -8,14 +8,16 @@ const app = express();
 
 const GameInfoController = require("./controller/GameInfoController");
 const AuthController = require("./controller/AuthController");
+const WishListController = require("./controller/WishListController");
 
 const UserMongoRepository = require("./infra/UserMongoRepository");
 const PORT = 3000;
 const token = "";
 const DB_URL = "mongodb:27017";
 const DB_NAME = "playstimation";
-const authController = new AuthController(new UserMongoRepository());
-
+const userRepo = new UserMongoRepository();
+const authController = new AuthController(userRepo);
+const wishListController = new WishListController(userRepo);
 mongoose.connect(`mongodb://${DB_URL}/${DB_NAME}`, {
   useNewUrlParser: true,
 });
@@ -73,6 +75,40 @@ db.once("open", () => {
         res.sendStatus(result.statusCode);
       }
     });
+  });
+
+  app.get("/wishlist", (req, res) => {
+    let token = req.headers.token;
+    console.log(req.headers);
+    if (!token) res.sendStatus(401);
+    const id = authController.getUserIdByToken(token);
+    console.log("========= Get All Game In Wishlist ==============");
+    wishListController
+      .getAllGames(id)
+      .then((result) => {
+        res.status(200).send({ wishlist: result });
+      })
+      .catch((err) => {
+        console.log(err);
+        res.sendStatus(500);
+      });
+  });
+
+  app.post("/wishlist", (req, res) => {
+    let token = req.headers.token;
+    console.log(req.headers);
+    if (!token) res.sendStatus(401);
+    const id = authController.getUserIdByToken(token);
+    const game = req.body.game;
+    wishListController
+      .addGameToWishlist(id, game)
+      .then((status) => {
+        res.sendStatus(status);
+      })
+      .catch((err) => {
+        console.log(err);
+        res.sendStatus(500);
+      });
   });
 
   app.get("/authTest", (req, res) => {

@@ -1,17 +1,13 @@
 const UserDAO = require("./DAO/UserMongoDAO");
-const WishlistDAO = require("./DAO/WishlistMongoDAO");
+const WishGameDAO = require("./DAO/WishGameDAO");
 module.exports = class {
   constructor() {}
 
   async save(user) {
+    user.wishlist = [];
     const newUser = new UserDAO(user);
     let isSaved = false;
     await newUser.save().then((res) => (isSaved = true));
-    const newWL = new WishlistDAO({user: user.email, wishlist:[]});
-    //await newWL.save().then((res) => (isSaved = true));
-    console.log("ICIIIIIIIIIIII");
-    console.log(newWL);
-    console.log(isSaved);
     return isSaved;
   }
 
@@ -26,13 +22,32 @@ module.exports = class {
   }
 
   async findOneById(id) {
-    let mail;
+    let user;
     await UserDAO.findOne({ _id: id }).then((res) => {
-      mail = res.email;
+      user = res;
     });
     console.log("findOneById");
-    console.log(mail);
-    return mail;
+    console.log(user);
+    return user;
+  }
+
+  // WISHLIST
+
+  async addGameToWishlist(userId, game) {
+    const user = await this.findOneById(userId);
+    user.wishlist.push(game);
+    console.log(user);
+    UserDAO.updateOne({ _id: user._id }, user).then((res) => {
+      console.log(res);
+    });
+    //this.findOneById(user._id);
+  }
+
+  async getAllGames(userId) {
+    console.log("++++ REPO GETALLGAMES +++");
+    const user = await this.findOneById(userId);
+    const wishlist = user.wishlist;
+    console.log(wishlist);
+    return wishlist;
   }
 };
-

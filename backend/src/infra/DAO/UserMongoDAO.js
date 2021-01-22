@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const WishGameSchema = require("./WishGameDAO");
 
 const UserSchema = mongoose.Schema({
   email: {
@@ -10,9 +11,9 @@ const UserSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  wishlist:{
-    type : String,
-    required : false,
+  wishlist: {
+    type: [WishGameSchema],
+    required: false,
   },
 });
 

@@ -10,6 +10,11 @@ Vue.use(VueRouter);
 
 const routes = [
   {
+    path: "/wishlist",
+    name: "Wishlist",
+    component: WishList,
+  },
+  {
     path: "/game/:game",
     name: "Search",
     component: GameInfo,

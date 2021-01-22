@@ -16,7 +16,9 @@ module.exports = class {
       if (bcrypt.compareSync(user.password, res.password)) {
         console.log(res);
         console.log("Same Hash");
-        token = jwt.sign({ userId: res._id }, this.SECRET, { expiresIn: "1h" });
+        token = jwt.sign({ userId: res._id }, this.SECRET, {
+          expiresIn: "10s",
+        });
         refreshToken = jwt.sign({ userId: res._id }, this.REFRESH);
       }
     });
@@ -37,7 +39,7 @@ module.exports = class {
   getRefreshToken(refreshToken) {
     const userId = this.checkRefreshToken(refreshToken).userId;
     if (userId) {
-      return jwt.sign({ userId: userId }, this.SECRET, { expiresIn: "10s" });
+      return jwt.sign({ userId: userId }, this.SECRET, { expiresIn: "1h" });
     }
     return null;
   }
@@ -47,5 +49,4 @@ module.exports = class {
   getUserIdByToken(token) {
     return jwt.verify(token, this.SECRET).userId;
   }
-
 };

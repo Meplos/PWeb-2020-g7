@@ -17,6 +17,14 @@
               max-width="45"
             />
           </div>
+          <v-btn
+            v-if="$store.state.token"
+            fab
+            class="success mt-2"
+            @click="addToWishList"
+          >
+            <v-icon>mdi-plus</v-icon>
+          </v-btn>
         </v-col>
         <v-col cols="1">
           <div class="gameInfo__headerMetascore" :class="getScoreColor">
@@ -91,7 +99,6 @@ export default {
           },
         ];
       } else if (this.gogPrice && this.gogPrice < this.steamPrice) {
-        console.log("Wait what");
         return [
           {
             name: "gog",
@@ -125,13 +132,12 @@ export default {
     },
 
     getGame() {
-      console.log(this.$store.token);
       let headers = {
         token: null,
         lang: navigator.language,
       };
       if (this.$store.state.token) {
-        headers.token = this.$store.token;
+        headers.token = this.$store.state.token;
       }
       console.log(headers);
       console.log("get game beginning");
@@ -156,39 +162,35 @@ export default {
         .catch(() => {
           this.$router.push({ name: "NotFound" });
         });
-        console.log("get game end");
+      console.log("get game end");
     },
-    addToWishList()
-  {
-      let headers = {
-        token: null
+
+    addToWishList: function() {
+      alert("Btn click");
+      const game = {
+        name: this.name,
+        image: this.img,
+        platforms: this.platforms,
       };
-      headers.token =  this.$store.state.token ;
-      console.log("this.$store.state.token :");
-      console.log(this.$store.state.token);
-      console.log("this.$store.token :");
-      console.log(this.$store.token);
-      //console.log($store.state.token);
-      //console.log($store.token);
-      if (this.$store.state.token) {
-        headers.token =  this.$store.state.token ;
-      }
-      console.log("press wishlist beginning");
-      console.log(headers.token);
-      axios.post(`${this.$backendHost}/wishlist/${this.$route.params.game}`, {
-          headers: this.$store.state.token,
-        })
-        .then((res) => {
-          console.log(res.data)  
-          this.name = res.data.name;
-      }).catch(() => {
-          console.log("wishlist error caught");
-        });
-      console.log("press wishlist end");
+      let headers = {
+        token: null,
+        lang: navigator.language,
+      };
+
+      if (!this.$store.state.token) return;
+
+      headers.token = this.$store.state.token;
+      console.log("whishlist token : " + this.$store.state.token);
+      axios
+        .post(
+          `${this.$backendHost}/wishlist`,
+          { game: game },
+          { headers: headers }
+        )
+        .then((res) => console.log(res.status));
+    },
   },
-  },
-  
-  
+
   computed: {
     getScoreColor: function() {
       if (this.metascore > 80) return "success";
@@ -205,7 +207,7 @@ export default {
   },
   mounted() {
     this.getGame();
-  }
+  },
 };
 </script>
 
