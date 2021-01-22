@@ -2,26 +2,24 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const mongoose = require("mongoose");
-mongoose.set('useFindAndModify', false);
+
+mongoose.set("useFindAndModify", false);
+const app = express();
 
 const GameInfoController = require("./controller/GameInfoController");
-const WishlistController = require("./controller/WishlistController");
-const app = express();
 const AuthController = require("./controller/AuthController");
+
 const UserMongoRepository = require("./infra/UserMongoRepository");
-const WishlistMongoRepository = require("./infra/WishlistMongoRepository");
 const PORT = 3000;
 const token = "";
 const DB_URL = "mongodb:27017";
 const DB_NAME = "playstimation";
 const authController = new AuthController(new UserMongoRepository());
-const wishlistController = new WishlistController(
-  new WishlistMongoRepository()
-);
 
 mongoose.connect(`mongodb://${DB_URL}/${DB_NAME}`, {
   useNewUrlParser: true,
 });
+
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", () => {
@@ -62,33 +60,6 @@ db.once("open", () => {
           .status(401)
           .send({ title: "Sign in error", error: "Invalid credential" });
     });
-  });
-
-  app.post("/wishlist/:gameName", (req, res) => {
-    console.log("in post function");
-    const gameName = req.params.gameName;
-    console.log( req.body.headers);
-    if (req.body.headers) {
-      console.log("in post function 2");
-      const userName = authController.getUserIdByToken(req.body.headers);
-      wishlistController
-        .addGameToWishlist(gameName, userName)
-        .then((result) => {
-          console.log(result);
-          console.log(result.statusCode);
-          if (result) {
-            res.status(200).send({
-              title : "Game added to wishlist",
-              gameName : gameName,
-              userName : userName,
-            });
-          } else {
-            res.Status(401).send({
-              title : "error adding game to wishlist"
-            });
-          }
-        });
-    }
   });
 
   app.get("/game/:gameName", (req, res) => {
