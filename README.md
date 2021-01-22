@@ -7,7 +7,7 @@ Dans le cadre de l’Unité d’Enseignement de Programmation Web, il nous est d
 - Front consomme une API REST exposé par le back
 - API spécifié et documentée en open API (Swagger)
 - Partie serveur consommant des autres API tierces
-- Back faisant de la persistance de données avec une Base de Données (pour la gestion des recommandations et la liste de souhaits)
+- Back faisant de la persistance de données avec une Base de Données (comptes utilisateurs)
 - Application supportant une forme d’authentification
 
 # Mise en place
