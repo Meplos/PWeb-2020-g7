@@ -111,6 +111,20 @@ db.once("open", () => {
       });
   });
 
+  app.delete("/wishlist", (req, res) => {
+    let token = req.headers.token;
+    console.log(req.headers);
+    if (!token) res.sendStatus(401);
+    const id = authController.getUserIdByToken(token);
+    const name = req.body.name;
+    wishListController
+      .deleteGame(id, name)
+      .then(() => res.sendStatus(200))
+      .catch((err) => {
+        console.log(err);
+        res.sendStatus(500);
+      });
+  });
   app.get("/authTest", (req, res) => {
     console.log(req.headers);
     token = req.headers.token;

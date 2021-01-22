@@ -13,4 +13,9 @@ module.exports = class {
     const wishlist = await this.repo.getAllGames(id);
     return wishlist;
   }
+
+  async deleteGame(id, gameName) {
+    await this.repo.deleteGame(id, gameName);
+    return 200;
+  }
 };

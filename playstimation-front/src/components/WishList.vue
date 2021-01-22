@@ -7,7 +7,7 @@
       </div>
     </v-row>
     <v-row v-for="(game, index) in wishlist" :key="index">
-      <div>
+      <div @click="deleteGame(game)">
         {{ game.name }}
       </div>
     </v-row>
@@ -38,6 +38,22 @@ export default {
         .then((res) => {
           this.wishlist = res.data.wishlist;
         });
+    },
+
+    deleteGame(game) {
+      console.log(this.$store.state.token);
+      let headers = {
+        token: null,
+        lang: navigator.language,
+      };
+      if (this.$store.state.token) {
+        headers.token = this.$store.state.token;
+      }
+      console.log(headers);
+      axios.delete(`${this.$backendHost}/wishlist/`, {
+        data: game,
+        headers: headers,
+      });
     },
   },
 
