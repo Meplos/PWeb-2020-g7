@@ -13,6 +13,7 @@ const routes = [
     path: "/wishlist",
     name: "Wishlist",
     component: WishList,
+    props: { isSignInPage: true },
   },
   {
     path: "/game/:game",
@@ -45,7 +46,6 @@ const routes = [
     path: "/WishList",
     name: "WishList",
     component: WishList,
-    props: { isSignInPage: true },
   },
 ];
 
