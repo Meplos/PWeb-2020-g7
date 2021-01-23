@@ -6,8 +6,11 @@
         <v-alert class="error">Wishlist is empty</v-alert>
       </div>
     </v-row>
+    <v-btn fab class="error" @click="deleteGames">
+      <v-icon>mdi-trash</v-icon>
+    </v-btn>
     <v-row v-for="(game, index) in wishlist" :key="index">
-      <div @click="deleteGame(game)">
+      <div @click="addToDelete(game.name)">
         {{ game.name }}
       </div>
     </v-row>
@@ -19,6 +22,7 @@ import axios from "axios";
 export default {
   data: () => ({
     wishlist: [],
+    deleteList: [],
   }),
   methods: {
     getWishList() {
@@ -39,8 +43,13 @@ export default {
           this.wishlist = res.data.wishlist;
         });
     },
-
-    deleteGame(game) {
+    addToDelete(name) {
+      this.deleteList.push(name);
+    },
+    removeFromDelete(name) {
+      this.deleteList = this.deleteList.filter((cur) => cur !== name);
+    },
+    deleteGames() {
       console.log(this.$store.state.token);
       let headers = {
         token: null,
@@ -51,7 +60,7 @@ export default {
       }
       console.log(headers);
       axios.delete(`${this.$backendHost}/wishlist/`, {
-        data: game,
+        data: { list: this.deleteList },
         headers: headers,
       });
     },

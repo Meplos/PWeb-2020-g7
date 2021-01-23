@@ -116,9 +116,9 @@ db.once("open", () => {
     console.log(req.headers);
     if (!token) res.sendStatus(401);
     const id = authController.getUserIdByToken(token);
-    const name = req.body.name;
+    const list = req.body.list;
     wishListController
-      .deleteGame(id, name)
+      .deleteGame(id, list)
       .then(() => res.sendStatus(200))
       .catch((err) => {
         console.log(err);

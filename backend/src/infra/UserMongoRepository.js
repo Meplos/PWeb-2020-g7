@@ -51,10 +51,12 @@ module.exports = class {
     return wishlist;
   }
 
-  async deleteGame(userId, gameName) {
+  async deleteGame(userId, gameList) {
     console.log("++++ REPO DELETE GAME +++");
     const user = await this.findOneById(userId);
-    user.wishlist = user.wishlist.filter((game) => game.name !== gameName);
+    user.wishlist = user.wishlist.filter(
+      (game) => !gameList.includes(game.name)
+    );
     UserDAO.updateOne({ _id: user._id }, user).then((res) => {
       console.log(res);
     });
