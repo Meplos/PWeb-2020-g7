@@ -16,6 +16,7 @@ module.exports = class {
         gameInfo = new GameInfo(
           game.id,
           game.name,
+          game.slug,
           game.metacritic,
           game.background_image
         );

@@ -17,6 +17,19 @@
               max-width="45"
             />
           </div>
+          <v-btn
+            v-if="$store.state.token"
+            fab
+            class="success mt-2"
+            :class="
+              $store.state.wishlist.find((cur) => cur.slug === slug)
+                ? 'disabled'
+                : 'enable'
+            "
+            @click="addToWishList"
+          >
+            <v-icon>mdi-plus</v-icon>
+          </v-btn>
         </v-col>
         <v-col cols="1">
           <div class="gameInfo__headerMetascore" :class="getScoreColor">
@@ -24,34 +37,34 @@
           </div>
         </v-col>
       </v-row>
-      <div class="gameInfo__shopList">
-        <a
-          v-for="shop in getShopOrderByPrices()"
-          :key="shop.shop"
-          :href="shop.url"
+    </div>
+    <div class="gameInfo__shopList">
+      <a
+        v-for="shop in getShopOrderByPrices()"
+        :key="shop.shop"
+        :href="shop.url"
+      >
+        <v-row
+          class="gameInfo__shop"
+          :class="shop.price ? shop.color : 'error'"
         >
-          <v-row
-            class="gameInfo__shop"
-            :class="shop.price ? shop.color : 'error'"
-          >
-            <v-col cols="10">
-              <v-img
-                :src="require(`../assets/${shop.name}.png`)"
-                max-height="70"
-                max-width="70"
-              ></v-img>
-            </v-col>
-            <v-col cols="2">
-              <p class="shop__price" v-if="shop.price">
-                {{ currency }}{{ shop.price }}
-              </p>
-              <p class="shop__price" v-else>
-                Game not available on {{ shop.name }}
-              </p>
-            </v-col>
-          </v-row>
-        </a>
-      </div>
+          <v-col cols="10">
+            <v-img
+              :src="require(`../assets/${shop.name}.png`)"
+              max-height="70"
+              max-width="70"
+            ></v-img>
+          </v-col>
+          <v-col cols="2">
+            <p class="shop__price" v-if="shop.price">
+              {{ currency }}{{ shop.price }}
+            </p>
+            <p class="shop__price" v-else>
+              Game not available on {{ shop.name }}
+            </p>
+          </v-col>
+        </v-row>
+      </a>
     </div>
   </div>
 </template>
@@ -91,7 +104,6 @@ export default {
           },
         ];
       } else if (this.gogPrice && this.gogPrice < this.steamPrice) {
-        console.log("Wait what");
         return [
           {
             name: "gog",
@@ -125,13 +137,12 @@ export default {
     },
 
     getGame() {
-      console.log(this.$store.token);
       let headers = {
         token: null,
         lang: navigator.language,
       };
       if (this.$store.state.token) {
-        headers.token = this.$store.token;
+        headers.token = this.$store.state.token;
       }
       console.log(headers);
       console.log("get game beginning");
@@ -156,39 +167,38 @@ export default {
         .catch(() => {
           this.$router.push({ name: "NotFound" });
         });
-        console.log("get game end");
+      console.log("get game end");
     },
-    addToWishList()
-  {
-      let headers = {
-        token: null
+
+    addToWishList: function() {
+      if (this.$store.state.wishlist.find((cur) => cur.slug === this.slug))
+        return;
+      const game = {
+        name: this.name,
+        slug: this.slug,
+        image: this.img,
+        platforms: this.platforms,
       };
-      headers.token =  this.$store.state.token ;
-      console.log("this.$store.state.token :");
-      console.log(this.$store.state.token);
-      console.log("this.$store.token :");
-      console.log(this.$store.token);
-      //console.log($store.state.token);
-      //console.log($store.token);
-      if (this.$store.state.token) {
-        headers.token =  this.$store.state.token ;
-      }
-      console.log("press wishlist beginning");
-      console.log(headers.token);
-      axios.post(`${this.$backendHost}/wishlist/${this.$route.params.game}`, {
-          headers: this.$store.state.token,
-        })
-        .then((res) => {
-          console.log(res.data)  
-          this.name = res.data.name;
-      }).catch(() => {
-          console.log("wishlist error caught");
-        });
-      console.log("press wishlist end");
+      console.log(game);
+      let headers = {
+        token: null,
+        lang: navigator.language,
+      };
+
+      if (!this.$store.state.token) return;
+
+      headers.token = this.$store.state.token;
+      console.log("whishlist token : " + this.$store.state.token);
+      axios
+        .post(
+          `${this.$backendHost}/wishlist`,
+          { game: game },
+          { headers: headers }
+        )
+        .then(() => this.$store.dispatch("refreshWishlist"));
+    },
   },
-  },
-  
-  
+
   computed: {
     getScoreColor: function() {
       if (this.metascore > 80) return "success";
@@ -205,7 +215,7 @@ export default {
   },
   mounted() {
     this.getGame();
-  }
+  },
 };
 </script>
 

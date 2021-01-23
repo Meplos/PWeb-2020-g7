@@ -2,26 +2,26 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const mongoose = require("mongoose");
-mongoose.set('useFindAndModify', false);
+
+mongoose.set("useFindAndModify", false);
+const app = express();
 
 const GameInfoController = require("./controller/GameInfoController");
-const WishlistController = require("./controller/WishlistController");
-const app = express();
 const AuthController = require("./controller/AuthController");
+const WishListController = require("./controller/WishListController");
+
 const UserMongoRepository = require("./infra/UserMongoRepository");
-const WishlistMongoRepository = require("./infra/WishlistMongoRepository");
 const PORT = 3000;
 const token = "";
 const DB_URL = "mongodb:27017";
 const DB_NAME = "playstimation";
-const authController = new AuthController(new UserMongoRepository());
-const wishlistController = new WishlistController(
-  new WishlistMongoRepository()
-);
-
+const userRepo = new UserMongoRepository();
+const authController = new AuthController(userRepo);
+const wishListController = new WishListController(userRepo);
 mongoose.connect(`mongodb://${DB_URL}/${DB_NAME}`, {
   useNewUrlParser: true,
 });
+
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", () => {
@@ -64,33 +64,6 @@ db.once("open", () => {
     });
   });
 
-  app.post("/wishlist/:gameName", (req, res) => {
-    console.log("in post function");
-    const gameName = req.params.gameName;
-    console.log( req.body.headers);
-    if (req.body.headers) {
-      console.log("in post function 2");
-      const userName = authController.getUserIdByToken(req.body.headers);
-      wishlistController
-        .addGameToWishlist(gameName, userName)
-        .then((result) => {
-          console.log(result);
-          console.log(result.statusCode);
-          if (result) {
-            res.status(200).send({
-              title : "Game added to wishlist",
-              gameName : gameName,
-              userName : userName,
-            });
-          } else {
-            res.Status(401).send({
-              title : "error adding game to wishlist"
-            });
-          }
-        });
-    }
-  });
-
   app.get("/game/:gameName", (req, res) => {
     console.log("in get function");
     const name = req.params.gameName;
@@ -104,6 +77,54 @@ db.once("open", () => {
     });
   });
 
+  app.get("/wishlist", (req, res) => {
+    let token = req.headers.token;
+    console.log(req.headers);
+    if (!token) res.sendStatus(401);
+    const id = authController.getUserIdByToken(token);
+    console.log("========= Get All Game In Wishlist ==============");
+    wishListController
+      .getAllGames(id)
+      .then((result) => {
+        res.status(200).send({ wishlist: result });
+      })
+      .catch((err) => {
+        console.log(err);
+        res.sendStatus(500);
+      });
+  });
+
+  app.post("/wishlist", (req, res) => {
+    let token = req.headers.token;
+    console.log(req.headers);
+    if (!token) res.sendStatus(401);
+    const id = authController.getUserIdByToken(token);
+    const game = req.body.game;
+    wishListController
+      .addGameToWishlist(id, game)
+      .then((status) => {
+        res.sendStatus(status);
+      })
+      .catch((err) => {
+        console.log(err);
+        res.sendStatus(500);
+      });
+  });
+
+  app.delete("/wishlist", (req, res) => {
+    let token = req.headers.token;
+    console.log(req.headers);
+    if (!token) res.sendStatus(401);
+    const id = authController.getUserIdByToken(token);
+    const list = req.body.list;
+    wishListController
+      .deleteGame(id, list)
+      .then(() => res.sendStatus(200))
+      .catch((err) => {
+        console.log(err);
+        res.sendStatus(500);
+      });
+  });
   app.get("/authTest", (req, res) => {
     console.log(req.headers);
     token = req.headers.token;
@@ -113,7 +134,6 @@ db.once("open", () => {
 
   app.post("/refreshToken", (req, res) => {
     const refreshToken = req.body.refreshToken;
-    console.log(`REFRESH ${refreshToken}`);
     const newToken = authController.getRefreshToken(refreshToken);
     if (newToken) {
       res.status(200).send({ token: newToken });

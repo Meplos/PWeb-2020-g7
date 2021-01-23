@@ -34,7 +34,7 @@
         >
           Log In
         </v-btn>
-        <v-btn v-else text>
+        <v-btn v-else text @click="$router.push({ name: 'Wishlist' })">
           <v-icon>mdi-shopping-outline</v-icon>
         </v-btn>
         <v-btn
@@ -46,7 +46,11 @@
         >
           Create account
         </v-btn>
-        <v-btn v-else text @click="$store.commit('DECONNEXION'), $router.push({ name: 'Home' })">
+        <v-btn
+          v-else
+          text
+          @click="$store.commit('DECONNEXION'), $router.push({ name: 'Home' })"
+        >
           <v-icon>mdi-power</v-icon>
         </v-btn>
       </v-row>
