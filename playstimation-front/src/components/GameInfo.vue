@@ -21,6 +21,11 @@
             v-if="$store.state.token"
             fab
             class="success mt-2"
+            :class="
+              $store.state.wishlist.find((cur) => cur.slug === slug)
+                ? 'disabled'
+                : 'enable'
+            "
             @click="addToWishList"
           >
             <v-icon>mdi-plus</v-icon>
@@ -32,34 +37,34 @@
           </div>
         </v-col>
       </v-row>
-      <div class="gameInfo__shopList">
-        <a
-          v-for="shop in getShopOrderByPrices()"
-          :key="shop.shop"
-          :href="shop.url"
+    </div>
+    <div class="gameInfo__shopList">
+      <a
+        v-for="shop in getShopOrderByPrices()"
+        :key="shop.shop"
+        :href="shop.url"
+      >
+        <v-row
+          class="gameInfo__shop"
+          :class="shop.price ? shop.color : 'error'"
         >
-          <v-row
-            class="gameInfo__shop"
-            :class="shop.price ? shop.color : 'error'"
-          >
-            <v-col cols="10">
-              <v-img
-                :src="require(`../assets/${shop.name}.png`)"
-                max-height="70"
-                max-width="70"
-              ></v-img>
-            </v-col>
-            <v-col cols="2">
-              <p class="shop__price" v-if="shop.price">
-                {{ currency }}{{ shop.price }}
-              </p>
-              <p class="shop__price" v-else>
-                Game not available on {{ shop.name }}
-              </p>
-            </v-col>
-          </v-row>
-        </a>
-      </div>
+          <v-col cols="10">
+            <v-img
+              :src="require(`../assets/${shop.name}.png`)"
+              max-height="70"
+              max-width="70"
+            ></v-img>
+          </v-col>
+          <v-col cols="2">
+            <p class="shop__price" v-if="shop.price">
+              {{ currency }}{{ shop.price }}
+            </p>
+            <p class="shop__price" v-else>
+              Game not available on {{ shop.name }}
+            </p>
+          </v-col>
+        </v-row>
+      </a>
     </div>
   </div>
 </template>
@@ -166,12 +171,15 @@ export default {
     },
 
     addToWishList: function() {
-      alert("Btn click");
+      if (this.$store.state.wishlist.find((cur) => cur.slug === this.slug))
+        return;
       const game = {
         name: this.name,
+        slug: this.slug,
         image: this.img,
         platforms: this.platforms,
       };
+      console.log(game);
       let headers = {
         token: null,
         lang: navigator.language,
@@ -187,7 +195,7 @@ export default {
           { game: game },
           { headers: headers }
         )
-        .then((res) => console.log(res.status));
+        .then(() => this.$store.dispatch("refreshWishlist"));
     },
   },
 

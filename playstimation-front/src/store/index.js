@@ -9,6 +9,7 @@ const store = new Vuex.Store({
     token: null,
     refresh: null,
     refreshTimer: null,
+    wishlist: [],
   },
   mutations: {
     CONNEXION(state, token) {
@@ -22,6 +23,9 @@ const store = new Vuex.Store({
     },
     SET_REFRESH(state, refresh) {
       state.refresh = refresh;
+    },
+    SET_WISHLIST(state, wishlist) {
+      state.wishlist = wishlist;
     },
   },
   actions: {
@@ -38,6 +42,21 @@ const store = new Vuex.Store({
             });
         } else clearInterval(this.state.refreshTimer);
       }, 5000);
+    },
+    refreshWishlist() {
+      if (!this.state.token) return;
+
+      let headers = {
+        token: this.state.token,
+      };
+      console.log(headers);
+      axios
+        .get(`http://localhost:3000/wishlist/`, {
+          headers: headers,
+        })
+        .then((res) => {
+          this.commit("SET_WISHLIST", res.data.wishlist);
+        });
     },
   },
 });

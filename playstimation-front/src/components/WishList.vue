@@ -1,29 +1,61 @@
 <template>
   <div class="WishList">
     <h1>Wishlist</h1>
-    <div v-if="wishlist.length <= 0">
+    <div v-if="$store.state.wishlist.length <= 0">
       <v-alert class="error">Wishlist is empty</v-alert>
     </div>
     <div v-else>
-      <v-btn fab class="error" @click="deleteGames">
+      <v-btn icon class="error" @click="deleteGames">
         <v-icon>mdi-trash-can</v-icon>
       </v-btn>
+      <v-checkbox
+        label="Select All"
+        v-model="selectAll"
+        @change="checkList = checkList.map((cur) => selectAll)"
+      ></v-checkbox>
     </div>
 
-    <div class="gameInfo success">
-      <a v-for="(game, index) in wishlist" :key="index">
-        <v-row>
-          <v-col cols="2">
-            <v-img :src="game.image" class="game__img ml-2"></v-img>
-          </v-col>
-          <v-col cols="7" class="align-self-center">
-            <h2>{{ game.name }}</h2>
-          </v-col>
-          <v-col cols="1" class="align-self-center">
-            <v-checkbox v-model="checkList[index]"></v-checkbox>
-          </v-col>
-        </v-row>
-      </a>
+    <div
+      class="wishGameInfo"
+      v-for="(game, index) in $store.state.wishlist"
+      :key="index"
+      :class="!checkList[index] ? 'secondary' : 'error'"
+    >
+      <v-row>
+        <v-col cols="2">
+          <v-img :src="game.image" class="game__img ml-2"></v-img>
+        </v-col>
+        <v-col cols="4" class="align-self-center">
+          <h2>{{ game.name }}</h2>
+        </v-col>
+        <v-col cols="1" class="align-self-center">
+          <v-checkbox v-model="checkList[index]"></v-checkbox>
+        </v-col>
+        <v-col cols="4" class="align-self-center">
+          <div class="gameInfo__headerPlatform">
+            <v-img
+              v-for="(platform, index) in game.platforms"
+              :key="index"
+              class="md-2 mr-6"
+              :src="require(`../assets/${platform}.png`)"
+              max-height="45"
+              max-width="45"
+            />
+          </div>
+        </v-col>
+        <v-col cols="1" class="align-self-center">
+          <v-btn
+            icon
+            @click="
+              $router.push({ name: 'Search', params: { game: game.slug } })
+            "
+          >
+            <v-icon>
+              mdi-share
+            </v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
     </div>
   </div>
 </template>
@@ -32,8 +64,8 @@
 import axios from "axios";
 export default {
   data: () => ({
-    wishlist: [],
     checkList: [],
+    selectAll: false,
   }),
   methods: {
     getWishList() {
@@ -52,21 +84,13 @@ export default {
         })
         .then((res) => {
           this.wishlist = res.data.wishlist;
-          this.wishlist.forEach(() => {
-            this.checkList.push(false);
-          });
         });
-    },
-    addToDelete(name) {
-      this.deleteList.push(name);
-    },
-    removeFromDelete(name) {
-      this.deleteList = this.deleteList.filter((cur) => cur !== name);
     },
     deleteGames() {
       const deleteList = [];
-      for (let index = 0; index < this.wishlist.length; index++) {
-        if (this.checkList[index]) deleteList.push(this.wishlist[index].name);
+      for (let index = 0; index < this.$store.state.wishlist.length; index++) {
+        if (this.checkList[index])
+          deleteList.push(this.$store.state.wishlist[index].name);
       }
       console.log(this.$store.state.token);
       let headers = {
@@ -77,9 +101,21 @@ export default {
         headers.token = this.$store.state.token;
       }
       console.log(headers);
-      axios.delete(`${this.$backendHost}/wishlist/`, {
-        data: { list: deleteList },
-        headers: headers,
+      axios
+        .delete(`${this.$backendHost}/wishlist/`, {
+          data: { list: deleteList },
+          headers: headers,
+        })
+        .then(() => {
+          this.$store
+            .dispatch("refreshWishlist")
+            .then(() => this.setCheckList());
+        });
+    },
+
+    setCheckList() {
+      this.$store.state.wishlist.forEach(() => {
+        this.checkList.push(false);
       });
     },
   },
@@ -88,7 +124,7 @@ export default {
     if (!this.$store.state.token) {
       this.$router.push({ name: "Home" });
     }
-    this.getWishList();
+    this.$store.dispatch("refreshWishlist").then(() => this.setCheckList());
   },
 };
 </script>
@@ -102,7 +138,7 @@ export default {
   border-radius: 22px;
 }
 
-.gameInfo {
+.wishGameInfo {
   margin-top: 30px;
   box-shadow: 0px 4px 10px 5px rgba(0, 0, 0, 0.25);
   border-radius: 25px;

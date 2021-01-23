@@ -1,7 +1,8 @@
 module.exports = class {
-  constructor(id, name, metascore, img) {
+  constructor(id, name, slug, metascore, img) {
     this.id = id;
     this.name = name;
+    this.slug = slug;
     this.metascore = metascore;
     this.img = img;
     this.platforms = [];

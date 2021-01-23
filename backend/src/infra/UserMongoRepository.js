@@ -34,7 +34,10 @@ module.exports = class {
   // WISHLIST
 
   async addGameToWishlist(userId, game) {
+    console.log("ADD TO WISHLIST");
     const user = await this.findOneById(userId);
+    console.log(game);
+
     user.wishlist.push(game);
     console.log(user);
     UserDAO.updateOne({ _id: user._id }, user).then((res) => {

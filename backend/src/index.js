@@ -134,7 +134,6 @@ db.once("open", () => {
 
   app.post("/refreshToken", (req, res) => {
     const refreshToken = req.body.refreshToken;
-    console.log(`REFRESH ${refreshToken}`);
     const newToken = authController.getRefreshToken(refreshToken);
     if (newToken) {
       res.status(200).send({ token: newToken });

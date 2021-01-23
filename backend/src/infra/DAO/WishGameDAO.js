@@ -6,6 +6,10 @@ const WishGameSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  slug: {
+    type: String,
+    required: true,
+  },
   image: {
     type: String,
     required: true,
@@ -15,7 +19,5 @@ const WishGameSchema = mongoose.Schema({
     required: true,
   },
 });
-
-const WishGameDAO = mongoose.model("WishGame", WishGameSchema);
 
 module.exports = WishGameSchema;

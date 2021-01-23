@@ -130,6 +130,7 @@ export default {
           this.$store.commit("CONNEXION", res.data.token);
           this.$store.commit("SET_REFRESH", res.data.refreshToken);
           this.$store.dispatch("refreshToken");
+          this.$store.dispatch("refreshWishlist");
           this.$router.push({ name: "Home" });
         } else {
           this.error = res.data.error;
