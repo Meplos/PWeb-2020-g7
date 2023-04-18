@@ -12,7 +12,7 @@ services:
   back:
     container_name: "Back_API"
     build: ./backend
-    restart: unless-stopped
+    restart: always
     ports:
       - 3000:3000
     volumes:
